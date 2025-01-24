@@ -1,0 +1,67 @@
+#!/bin/bash
+# Job name
+#PBS -N mpi
+# Output files
+#PBS -o ./pbs_buffer_output.o
+#PBS -e ./pbs_buffer_error.e
+# Queue name
+#PBS -q short_cpuQ
+# Set the maximum wall time
+#PBS -l walltime=0:05:00
+# Number of nodes, cpus, mpi processors and amount of memory
+#PBS -l select=1:ncpus=96:mpiprocs=96:mem=4gb
+
+# Modules for python and MPI
+module load gcc91
+module load mpich-3.2.1--gcc-9.1.0
+
+gcc() {
+    gcc-9.1.0 "$@"
+}
+gcc --version
+
+
+# Print the name of the file that contains the list of the nodes assigned to the job and list all the nodes
+NODES=$(cat $PBS_NODEFILE)
+echo The running nodes are $NODES
+
+# Get the list of unique nodes assigned to the job
+NODES=$(sort -u $PBS_NODEFILE)
+echo The running nodes are $NODES
+
+# Loop through each node and get architecture information
+for NODE in $NODES; do
+    echo "Node: $NODE"
+    ssh $NODE "lscpu"
+done
+
+# Select the working directory 
+cd    /home/carlo.osscazzador/MPI/ESAME                                        #<-------INSERT FILE PATH
+
+# the code should be previously compiled
+gcc Sequential_MPI_Transposition.c -o sequential_comp -DAutomatic
+mpicc Buffer_Parallel_MPI.c -o buffer_parallel_comp -DAutomatic
+
+# Run the code
+echo " "
+echo "SEQUENTIAL EXECUTION:"
+echo "---------------------------------------"
+./sequential_comp
+echo "---------------------------------------"
+echo " "
+
+
+# Initial number of processes (2^0 = 1)
+NUM_PROC=1
+
+# Loop to run the program 10 times
+for ((i=0; i<7; i++)); do
+    echo "---------------------------------------"
+    echo "Execution $((i+1)) with $NUM_PROC processes:"
+    mpirun -np $NUM_PROC ./buffer_parallel_comp
+    echo "---------------------------------------"
+    
+    # Increase the number of processes as a power of 2
+    NUM_PROC=$((NUM_PROC * 2))
+done
+
