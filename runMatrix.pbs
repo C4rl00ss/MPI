@@ -36,7 +36,7 @@ for NODE in $NODES; do
 done
 
 # Select the working directory 
-cd /home/carlo.osscazzador/MPI/ESAME                                         #<-------INSERT FILE PATH
+cd                                         #<-------INSERT FILE PATH
 
 # the code should be previously compiled
 gcc Sequential_MPI_Transposition.c -o sequential_comp -DAutomatic
