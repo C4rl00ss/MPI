@@ -1,6 +1,6 @@
 # MPI
 ### Repository description and file description
-This repository contains two PBS files (runMatrix.pbs and runBuffer.pbs) and tree C codes (Matrix_Parallel_MPI.c, Buffer_Parallel_MPI.c and Sequential_MPI_Transposition.c).
+This repository contains two PBS files (runMatrix.pbs and runBuffer.pbs) and three C codes (Matrix_Parallel_MPI.c, Buffer_Parallel_MPI.c and Sequential_MPI_Transposition.c).
 
    - The PBS file runMatrix.pbs compiles and executes the Matrix_Parallel_MPI.c code and Sequential_MPI_Transposition.c.
    - The PBS file runBuffer.pbs compiles and executes the Buffer_Parallel_MPI.c code and Sequential_MPI_Transposition.c.
@@ -21,28 +21,28 @@ Therefore, to successfully run either of the PBS files, you must ensure that the
 
 
 ### How to execute the codes with pbs files
-- __It is recommended to first read the flag session regarding the -DAutomatic flag for setting the matrix size.__   
+- __It is recommended to first read the flag section regarding the -DAutomatic flag for setting the matrix size.__   
 - Each PBS file contains all the commands required to compile and execute the Sequential_MPI_Transposition.c file and one of the two C files Matrix_Parallel_MPI.c or Buffer_Parallel_MPI.c
 - All the codes are written in c and compiled using GCC. The version of the compiler is gcc-9.1.0. For the correct use of MPI, the MPICH library was introduced in its version mpich-3.2.1 compiled by GCC in the gcc-9.1.0 version (mpich-3.2.1--gcc-9.1.0) .
 - To simplify the explanation we will only talk about the pbs file "runMatrix.pbs" and therefore its related code "Matrix_Parallel_MPI.c" because if you want to run the other code the procedure is the same.
 
 
 To run the PBS file, you need to:  
-1. Copy the runMatrix.pbs file, the Matrix_Parallel_MPI.c file and the Sequential_MPI_Transposition.c file to the cluster.  
+1. Copy runMatrix.pbs, Matrix_Parallel_MPI.c, and Sequential_MPI_Transposition.c to the cluster.  
 2. Open the PBS file and modify the line indicating the location of the C files to be compiled (comments in the PBS file guide this operation).  
 3. Save the PBS file.
 5. Finally, submit the PBS file using the directive `qsub runMatrix.pbs` in the cluster's bash terminal, and the file will be processed.
 
 ### How to execute the MPI codes in a interactive session
-- __It is recommended to first read the flag session regarding the -DAutomatic flag for setting the matrix size__
+- __It is recommended to first read the flag section regarding the -DAutomatic flag for setting the matrix size__
 -  To simplify the explanation we will only talk about the Matrix_Parallel_MPI.c file because if you want to run the other code Buffer_Parallel_MPI.c the procedure is the same.    
 1. Copy the Matrix_Parallel_MPI.c file to the cluster.
 2. Open an interactive session with 1 node, 96 cpus ,96 mpi processes, 4 gb of RAM 
 3. load the module gcc91 for the c compiler GCC 9.1.0
 4. load the module  mpich-3.2.1--gcc-9.1.0 in order to compile MPI
-5. Use this to compile the code: "mpicc Matrix_Parallel_MPI.c -o matrix_paralel_comp -DAutomatic" ( for the other file use "mpicc Buffer_Parallel_MPI.c -o buffer_parallel_comp -DAutomatic")
-7. Run the output file "matrix_paralel_comp" using the following command "mpirun -np NUM_PROC ./matrix_paralel_comp", change "NUM_PROC" to the number of processes you want to be created (only power of two). (for the other file use "mpirun -np NUM_PROC ./buffer_parallel_comp") 
-8. If you want to manually enter the size of the matrix, remove the flag "-DAutomatic", compile and then execute the output file. The program will ask you the matrix sixe. The only accepted values are numbers ​​of the power of two.
+5. Use this to compile the code: "mpicc Matrix_Parallel_MPI.c -o matrix_parallel_comp -DAutomatic" ( for the other file use "mpicc Buffer_Parallel_MPI.c -o buffer_parallel_comp -DAutomatic")
+7. Run the output file "matrix_paralel_comp" using the following command "mpirun -np NUM_PROC ./matrix_parallel_comp", change "NUM_PROC" to the number of processes you want to be created (only power of two). (for the other file use "mpirun -np NUM_PROC ./buffer_parallel_comp") 
+8. If you want to manually enter the size of the matrix, remove the flag "-DAutomatic", compile and then execute the output file. the program will ask you for the matrix size. The only accepted values are numbers ​​of the power of two.
 
 ### What resources does the pbs file require:
 The pbs file requests a node with 4GB of RAM and 96 available CPUs from the cluster for 5 minutes. 
@@ -67,7 +67,7 @@ The PBS file "runBuffer.pbs" will generate four outputs:
 
 
 ### Flags 
-The only needed flag is and -DAutomatic:
+The only required flag is -DAutomatic:
 - ##### DAutomatic:
 This flag eliminates the need to manually specify the matrix size at runtime. When the flag is used, the program automatically sets the matrix size to 8192. This is defined in the header of each C file by the line *#define AUTOMATIC_MATRIX_SIZE 8192*, which assigns the value 8192 to the matrix size **N**. This flag can be removed during compilation, but __NOT IN THE PBS FILE__, as the code will then prompt the user for the matrix size, which cannot be provided in a PBS batch script, leading to execution failure.   
 __IF YOU WANT TO REMOVE THE -DAutomatic FLAG IN ORDER TO SET THE MATRIX SIZE  (ONLY VALUES THAT ARE POWERS OF 2), YOU MUST OPEN AN INTERACTIVE SESSION.__   
