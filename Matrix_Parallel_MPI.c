@@ -14,7 +14,7 @@
 void MatTranspose(float ** local_transposed, float  ** local_rows, int rows_per_proc, int N){
     for (int i = 0; i < rows_per_proc; i++) {
         for (int j = 0; j < N; j++) {
-            local_transposed[j][i] = local_rows[i][j];   //prende una riga della matrice e la trasforma in una colonna 
+            local_transposed[j][i] = local_rows[i][j];    //takes a row of the matrix and turns it into a column  
         }
     }
 }
@@ -28,9 +28,9 @@ void MatTranspose(float ** local_transposed, float  ** local_rows, int rows_per_
 
 //FUNCTION TO ALLOCATE A DYNAMIC MATRIX IN THE HEAP
 float** allocate_matrix(int rows, int cols) {
-    float** matrix = (float**)malloc(rows * sizeof(float*)); // Allocare un array di puntatori per le righe
+    float** matrix = (float**)malloc(rows * sizeof(float*));  // Allocate an array of pointers for the rows
     for (int i = 0; i < rows; i++) {
-        matrix[i] = (float*)malloc(cols * sizeof(float)); // Allocare memoria per le colonne di ogni riga
+        matrix[i] = (float*)malloc(cols * sizeof(float)); // Allocate memory for the columns of each row
     }
     return matrix;
 }
